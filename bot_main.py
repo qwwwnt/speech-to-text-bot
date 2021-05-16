@@ -12,7 +12,7 @@ RU = 'ru-RU'
 FR = 'fr-FR'
 DE = 'de-DE'
 JP = 'ja-JP'
-LAN = RU # По умолчанию используется русский язык
+LAN = RU  # По умолчанию используется русский язык
 
 
 # Приветственное сообщение
@@ -25,12 +25,12 @@ def command_start(message):
 @bot.message_handler(commands=['language'])
 def language_message(message):
     markup = telebot.types.InlineKeyboardMarkup()
-    markup.add(telebot.types.InlineKeyboardButton(text='English', callback_data=EN))
-    markup.add(telebot.types.InlineKeyboardButton(text='Русский', callback_data=RU))
-    markup.add(telebot.types.InlineKeyboardButton(text='Français', callback_data=FR))
-    markup.add(telebot.types.InlineKeyboardButton(text='Deutsche', callback_data=DE))
-    markup.add(telebot.types.InlineKeyboardButton(text='日本語', callback_data=JP))
-    bot.send_message(message.chat.id, text="Пожалуйста, выберите язык распознования речи", reply_markup=markup)
+    markup.add(telebot.types.InlineKeyboardButton(text='English 🇬🇧', callback_data=EN))
+    markup.add(telebot.types.InlineKeyboardButton(text='Русский 🇷🇺', callback_data=RU))
+    markup.add(telebot.types.InlineKeyboardButton(text='Français 🇫🇷', callback_data=FR))
+    markup.add(telebot.types.InlineKeyboardButton(text='Deutsche 🇩🇪', callback_data=DE))
+    markup.add(telebot.types.InlineKeyboardButton(text='日本語 🇯🇵', callback_data=JP))
+    bot.send_message(message.chat.id, text="Пожалуйста, выберите язык распознавания речи", reply_markup=markup)
 
 
 # Обработка смены языка, изменяется глобальная переменная LAN, которая используется в функции recognize_google, а также печатается сообщение о смене языка
@@ -80,7 +80,26 @@ def handle(message):
         except sr.UnknownValueError:
             bot.send_message(message.chat.id, "Произошла ошибка при распознавании голоса!")
 
+# Сообщение, которое выводится при запуске /help
+answer_help = '''
+    Привет! ✋ Этот бот переводит в текст голосовые сообщения, которые получает. 
+    
+Команды, которые использует бот:
+    /help — Это сообщение)
+    /start — Начало диалога
+    /language — Выбор языка распознавания речи. Доступны Русский, Английский, Французский, Немецкий, Японский
+    
+Вопросы и пожелания отправляйте сюда — @speech_bot_questions_bot
+'''
+
+# Функция для команды /help
+@bot.message_handler(commands=['help'])
+def process_help_command(message):
+    global answer_help
+    bot.send_message(message.chat.id, answer_help)
+
 
 # Условие, для того, чтобы бот постоянно ожидал запрос от пользователя в конце
 if __name__ == '__main__':
     bot.infinity_polling()
+
