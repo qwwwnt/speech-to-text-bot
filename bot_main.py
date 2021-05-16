@@ -1,35 +1,29 @@
 import telebot
 import speech_recognition as sr
 import subprocess
+import languages as l
 
 r = sr.Recognizer()
-Token = '1873974788:AAG-1wbZTOwhYAuwe840qTnx8ZnRFkO4heM'
-bot = telebot.TeleBot(Token)
+from config import Token
 
-# Глобальные переменные для смены языка
-EN = 'en-GB'
-RU = 'ru-RU'
-FR = 'fr-FR'
-DE = 'de-DE'
-JP = 'ja-JP'
-LAN = RU  # По умолчанию используется русский язык
+bot = telebot.TeleBot(Token)
 
 
 # Приветственное сообщение
 @bot.message_handler(commands=["start"])
 def command_start(message):
-    bot.send_message(message.chat.id, "Привет! Отправь голосовое сообщение")
+    bot.send_message(message.chat.id, "Привет! ✋ Отправь голосовое сообщение")
 
 
 # Команда /language вызывает две кнопки, которые записывают в callback текущий язык
 @bot.message_handler(commands=['language'])
 def language_message(message):
     markup = telebot.types.InlineKeyboardMarkup()
-    markup.add(telebot.types.InlineKeyboardButton(text='English 🇬🇧', callback_data=EN))
-    markup.add(telebot.types.InlineKeyboardButton(text='Русский 🇷🇺', callback_data=RU))
-    markup.add(telebot.types.InlineKeyboardButton(text='Français 🇫🇷', callback_data=FR))
-    markup.add(telebot.types.InlineKeyboardButton(text='Deutsche 🇩🇪', callback_data=DE))
-    markup.add(telebot.types.InlineKeyboardButton(text='日本語 🇯🇵', callback_data=JP))
+    markup.add(telebot.types.InlineKeyboardButton(text='English 🇬🇧', callback_data=l.EN))
+    markup.add(telebot.types.InlineKeyboardButton(text='Русский 🇷🇺', callback_data=l.RU))
+    markup.add(telebot.types.InlineKeyboardButton(text='Français 🇫🇷', callback_data=l.FR))
+    markup.add(telebot.types.InlineKeyboardButton(text='Deutsche 🇩🇪', callback_data=l.DE))
+    markup.add(telebot.types.InlineKeyboardButton(text='日本語 🇯🇵', callback_data=l.JP))
     bot.send_message(message.chat.id, text="Пожалуйста, выберите язык распознавания речи", reply_markup=markup)
 
 
@@ -38,21 +32,21 @@ def language_message(message):
 def query_handler(call):
     answer = ''
     global LAN
-    if call.data == EN:
+    if call.data == l.EN:
         answer = 'Now bot use English (United Kingdom). Thank you!'
-        LAN = EN
-    elif call.data == RU:
+        LAN = l.EN
+    elif call.data == l.RU:
         answer = 'Теперь бот использует русский язык. Спасибо!'
-        LAN = RU
-    elif call.data == FR:
+        LAN = l.RU
+    elif call.data == l.FR:
         answer = 'Le bot utilise désormais le français. Merci!'
-        LAN = FR
-    elif call.data == DE:
+        LAN = l.FR
+    elif call.data == l.DE:
         answer = 'Der Bot spricht jetzt Deutsch. Danke!'
-        LAN = DE
-    elif call.data == JP:
+        LAN = l.DE
+    elif call.data == l.JP:
         answer = 'ボットは現在、日本語を使用しています。 ありがとうございました！'
-        LAN = JP
+        LAN = l.JP
     bot.send_message(call.message.chat.id, answer)
 
 
@@ -80,6 +74,7 @@ def handle(message):
         except sr.UnknownValueError:
             bot.send_message(message.chat.id, "Произошла ошибка при распознавании голоса!")
 
+
 # Сообщение, которое выводится при запуске /help
 answer_help = '''
     Привет! ✋ Этот бот переводит в текст голосовые сообщения, которые получает. 
@@ -92,14 +87,13 @@ answer_help = '''
 Вопросы и пожелания отправляйте сюда — @speech_bot_questions_bot
 '''
 
+
 # Функция для команды /help
 @bot.message_handler(commands=['help'])
 def process_help_command(message):
-    global answer_help
     bot.send_message(message.chat.id, answer_help)
 
 
 # Условие, для того, чтобы бот постоянно ожидал запрос от пользователя в конце
 if __name__ == '__main__':
     bot.infinity_polling()
-
